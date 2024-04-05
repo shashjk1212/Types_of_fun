@@ -1,0 +1,26 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+// Import ERC20 and Ownable contracts from OpenZeppelin library
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+
+contract JersyToken is ERC20, Ownable {
+    constructor() ERC20("JersyToken", "JERSY") Ownable(msg.sender) {}
+
+    function mint(address to, uint256 quantity) external onlyOwner {
+        require(quantity > 0, "Quantity to mint must be greater than zero");
+        _mint(to, quantity);
+    }
+    function burn(uint256 quantity) external {
+        require(quantity > 0, "Quantity to burn must be greater than zero");
+        require(balanceOf(msg.sender) >= quantity, "Insufficient balance to burn tokens");
+        _burn(msg.sender, quantity);
+    }
+    function transfer(address to, uint256 quantity) public override returns (bool) {
+        require(quantity > 0, "Transferred quantity must be greater than zero");
+        require(balanceOf(msg.sender) >= quantity, "Insufficient balance for transfer");
+        _transfer(msg.sender, to, quantity);
+        return true;
+    }
+}
